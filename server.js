@@ -33,7 +33,6 @@ app.post('/ask', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`✅ Backend en ligne sur le port ${port}`);
-});const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const OpenAI = require('openai');
