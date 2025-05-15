@@ -6,38 +6,40 @@ const OpenAI = require('openai');
 const app = express();
 const port = process.env.PORT || 10000;
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
+// Initialisation OpenAI
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Assure-toi que la variable est bien définie dans Render
+  apiKey: process.env.OPENAI_API_KEY, // ⚠️ Ta clé OpenAI doit être dans Render (onglet "Environment")
 });
 
+// Route API
 app.post('/ask', async (req, res) => {
   const { question } = req.body;
-  console.log('❓ Question reçue :', question);
+  console.log("✅ Question reçue :", question);
 
   if (!question) {
-    console.log('⚠️ Aucune question reçue.');
-    return res.status(400).send({ error: 'Question manquante' });
+    return res.status(400).json({ error: 'Question manquante' });
   }
 
   try {
-    const chat = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: question }],
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: question }]
     });
 
-    const answer = chat.choices[0].message.content;
-    console.log('✅ Réponse IA :', answer);
-
-    res.send({ answer });
-  } catch (error) {
-    console.error('❌ Erreur OpenAI :', error.message);
-    res.status(500).send({ error: 'Erreur OpenAI : ' + error.message });
+    const response = completion.choices[0].message.content;
+    console.log("✅ Réponse IA :", response);
+    res.json({ answer: response });
+  } catch (err) {
+    console.error("❌ Erreur OpenAI :", err.message);
+    res.status(500).json({ error: 'Erreur de l\'IA' });
   }
 });
 
+// Démarrage serveur
 app.listen(port, () => {
   console.log(`🚀 Backend prêt sur le port ${port}`);
 });
