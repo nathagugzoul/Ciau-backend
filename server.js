@@ -15,7 +15,10 @@ const openai = new OpenAI({
 
 app.post('/ask', async (req, res) => {
   const { question } = req.body;
+  console.log('❓ Question reçue :', question);
+
   if (!question) {
+    console.log('⚠️ Aucune question reçue.');
     return res.status(400).send({ error: 'Question manquante' });
   }
 
@@ -26,13 +29,15 @@ app.post('/ask', async (req, res) => {
     });
 
     const answer = chat.choices[0].message.content;
+    console.log('✅ Réponse IA :', answer);
+
     res.send({ answer });
   } catch (error) {
-    console.error(error);
+    console.error('❌ Erreur OpenAI :', error.message);
     res.status(500).send({ error: 'Erreur OpenAI : ' + error.message });
   }
 });
 
 app.listen(port, () => {
-  console.log(`✅ Serveur backend en ligne sur le port ${port}`);
+  console.log(`🚀 Backend prêt sur le port ${port}`);
 });
